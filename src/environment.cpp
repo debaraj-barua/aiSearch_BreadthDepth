@@ -35,6 +35,13 @@ void Environment::run() {
 			int search_option;
 
 			do {
+				cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+				cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+				cout<<"sizeof(map):"<<map.size()<<endl;
+				cout<<"sizeof(map[0]):"<<map[0].size()<<endl;
+				cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+				cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+
 				cout << "Please select : " << endl;
 				cout << "(1) Breadth-first  (2)Depth-fisrt " << endl;
 				cin >> search_option;

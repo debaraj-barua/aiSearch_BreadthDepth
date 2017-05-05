@@ -54,7 +54,7 @@ void Agent::print_map() {
 		cout << endl;
 	}
 
-	//this_thread::sleep_for(chrono::milliseconds(10));
+	this_thread::sleep_for(chrono::milliseconds(10));
 
 }
 
@@ -72,72 +72,70 @@ void Agent::bfs() {
 
 	nodes_queue.push(make_pair(initial_pos.first, initial_pos.second));
 	number_of_stored_nodes++;
+    int max_rows = map.size();
+    int max_cols = map[0].size();
 
-	std::set<pair<int, int>> explored;
+	while (nodes_queue.size() > 0) {
+			current_node = nodes_queue.front();
 
-	if(explored.insert(make_pair(initial_pos.first, initial_pos.second)).second)
-	{
-		cout<<"Updated explored\n";
-		while (nodes_queue.size() > 0) {
+			nodes_queue.pop();
+			number_of_stored_nodes--;
+			int row = current_node.first;
+			int col = current_node.second;
+			number_of_visited_nodes++;
 
-				current_node = nodes_queue.front();
-
-				nodes_queue.pop();
-				number_of_stored_nodes--;
-				int row = current_node.first;
-				int col = current_node.second;
-				cout<<"`````````````````````````````````````````````````````````````\n";
-				cout <<"\n Current Position::("<<row<<";"<<col<<")\n";
-				cout <<"\n Status in Current Position::"<< map[row][col]<<"\n";
-				number_of_visited_nodes++;
-				cout<<"`````````````````````````````````````````````````````````````\n";
+			if ((map[row][col]=="=") or (map[row][col]=="|") or (map[row][col]=="-"))
+			{
+				continue;
+			}
+			else
+			{
 				if  (map[row][col]=="*")
 				{
-					//goal_positions.push(current_node);
-					cout<<"=============================================================\n";
-					cout<<"found one~\n";
 					goal_positions.push_back(std::make_pair(row, col));
-					cout<<"=============================================================\n";
+
 					if (goal_positions.size()>=number_of_goals)
+					{
+						map[row][col]="-";
+						print_evaluation_metrics("queue");
 						return ;
+					}
 
 				}
-				else if (map[row][col]=="=" or map[row][col]=="|")
-				{
-					cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-					cout<<"Obstacle\n";
-					cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-				}
-				else
+				map[row][col]="-";
+
+				if (((row+1)<max_rows and (row+1)>0) and ((map[row+1][col]!="=") and (map[row+1][col]!="|") and (map[row+1][col]!="-")))
 				{
 
+					nodes_queue.push(make_pair(row+1, col));
+					number_of_stored_nodes++;
+				}
+				if (((row-1)<max_rows and (row-1)>0)and ((map[row-1][col]!="=") and (map[row-1][col]!="|") and (map[row-1][col]!="-")))
+				{
+					nodes_queue.push(make_pair(row-1, col));
+					number_of_stored_nodes++;
 				}
 
-				nodes_queue.push(make_pair(row+1, col));
-				number_of_stored_nodes++;
-				nodes_queue.push(make_pair(row-1, col));
-				number_of_stored_nodes++;
-				nodes_queue.push(make_pair(row, col+1));
-				number_of_stored_nodes++;
-				nodes_queue.push(make_pair(row, col-1));
-				number_of_stored_nodes++;
-	}
-	}
-	else
-	{
-		cout<<"Already explored";
-	}
-	//explored.push(make_pair(initial_pos.first, initial_pos.second));
-
-
-
-		//TODO
+				if (((col+1)<max_cols and (col+1)>0)and ((map[row][col+1]!="=") and (map[row][col+1]!="|") and (map[row][col+1]!="-")))
+				{
+					nodes_queue.push(make_pair(row, col+1));
+					number_of_stored_nodes++;
+				}
+				if (((col-1)<max_cols and (col-1)>0)and ((map[row][col-1]!="=") and (map[row][col-1]!="|") and (map[row][col-1]!="-")))
+				{
+					nodes_queue.push(make_pair(row, col-1));
+					number_of_stored_nodes++;
+				}
+			}
+			print_map();
+		}
+		//TO DO
 		/*Note: If the current node contains a dirt you can
 		 * store the position in the goal_positions vector 
 		 * by calling the push method e.g goal_positions.push(current_node)
 		 */
 
-		//print_map();
+
 
 
 
@@ -148,29 +146,87 @@ void Agent::dfs() {
 	//the stack stores a pair in the form (row, col)
 	stack<pair<int, int> > nodes_stack;
 	pair<int, int> current_node;
+
 	//Note: Elements stored in a pair can be accessed by calling the .first and .second attributes. E.g:
 	//int row = current_node.first
 	//int col = current_node.second
 
 	//Add the initial node to the stack
 	//Note: To add a new pair to the stack you can use the std::make_pair method e.g:
+
 	nodes_stack.push(make_pair(initial_pos.first, initial_pos.second));
 	number_of_stored_nodes++;
+    int max_rows = map.size();
+    int max_cols = map[0].size();
 
 	while (nodes_stack.size() > 0) {
 
 		current_node = nodes_stack.top();
 		nodes_stack.pop();
+		number_of_stored_nodes--;
+		int row = current_node.first;
+		int col = current_node.second;
+		number_of_visited_nodes++;
 
-		//TODO
-		/*Note: If the current node contains a dirt you can 
-		 * store the position in the goal_positions vector 
-		 * by calling the push method e.g goal_positions.push(current_node)
-		 */
+		if ((map[row][col]=="=") or (map[row][col]=="|") or (map[row][col]=="-"))
+		{
+			continue;
+		}
+		else
+		{
+			if  (map[row][col]=="*")
+			{
+				goal_positions.push_back(std::make_pair(row, col));
+
+				if (goal_positions.size()>=number_of_goals)
+				{
+					map[row][col]="-";
+					print_evaluation_metrics("stack");
+					return ;
+				}
+
+			}
+			map[row][col]="-";
+
+			if (((row+1)<max_rows and (row+1)>0) and ((map[row+1][col]!="=") and (map[row+1][col]!="|") and (map[row+1][col]!="-")))
+			{
+
+				nodes_stack.push(make_pair(row+1, col));
+				number_of_stored_nodes++;
+			}
+
+			if (((row-1)<max_rows and (row-1)>0)and ((map[row-1][col]!="=") and (map[row-1][col]!="|") and (map[row-1][col]!="-")))
+			{
+				nodes_stack.push(make_pair(row-1, col));
+				number_of_stored_nodes++;
+			}
+
+			if (((col+1)<max_cols and (col+1)>0)and ((map[row][col+1]!="=") and (map[row][col+1]!="|") and (map[row][col+1]!="-")))
+			{
+				nodes_stack.push(make_pair(row, col+1));
+				number_of_stored_nodes++;
+			}
+
+			if (((col-1)<max_cols and (col-1)>0)and ((map[row][col-1]!="=") and (map[row][col-1]!="|") and (map[row][col-1]!="-")))
+			{
+				nodes_stack.push(make_pair(row, col-1));
+				number_of_stored_nodes++;
+			}
+
+
+
+
+		}
+
+			//TO DO
+			/*Note: If the current node contains a dirt you can
+			 * store the position in the goal_positions vector
+			 * by calling the push method e.g goal_positions.push(current_node)
+			 */
 
 		print_map();
 
-	}
+		}
 
 	print_evaluation_metrics("stack");
 
