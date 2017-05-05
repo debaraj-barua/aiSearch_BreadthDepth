@@ -72,39 +72,54 @@ void Agent::bfs() {
 
 	nodes_queue.push(make_pair(initial_pos.first, initial_pos.second));
 	number_of_stored_nodes++;
+
+	/*****************************
+	 * @c max_rows, max_cols	:	Stores maximum number of rows, columns in the map. Used to stay within map
+	 * 								boundaries. Redundant in cases of maps with walls on the exterior.
+	 ****************************/
+
     int max_rows = map.size();
     int max_cols = map[0].size();
 
 	while (nodes_queue.size() > 0) {
-			current_node = nodes_queue.front();
 
-			nodes_queue.pop();
-			number_of_stored_nodes--;
-			int row = current_node.first;
-			int col = current_node.second;
-			number_of_visited_nodes++;
+			current_node = nodes_queue.front(); //Get the first node in the queue
+			nodes_queue.pop(); 					//pop the accessed node from the queue
+			number_of_stored_nodes--; 			//decrease size of stored nodes as one node has been popped
+			number_of_visited_nodes++;			//increase size of visited node as one node is being explored
+
+			int row = current_node.first;		//stores row index of current node
+			int col = current_node.second;		//stores column index of current node
+
 
 			if ((map[row][col]=="=") or (map[row][col]=="|") or (map[row][col]=="-"))
 			{
-				continue;
+				continue;						//if the current node is either an obstacle;Or,
+												//previously explored node; Continue to next node;
 			}
 			else
 			{
 				if  (map[row][col]=="*")
 				{
-					goal_positions.push_back(std::make_pair(row, col));
+					goal_positions.push_back(std::make_pair(row, col));   //Found a goal! inserting to goal_positions
 
-					if (goal_positions.size()>=number_of_goals)
+					if (goal_positions.size()>=number_of_goals)			  //If all goals are found, exit from function
 					{
-						map[row][col]="-";
-						print_evaluation_metrics("queue");
-						return ;
+						map[row][col]="-";								  // Replace node as explored: "-"; and
+						print_evaluation_metrics("queue");				  // print evaluation metrics before exiting
+  						return ;
 					}
 
 				}
-				map[row][col]="-";
+				map[row][col]="-";				 // Replace node as explored: "-"
 
-				if (((row+1)<max_rows and (row+1)>0) and ((map[row+1][col]!="=") and (map[row+1][col]!="|") and (map[row+1][col]!="-")))
+				/*********************************************************************
+				 * "If" statements below are used to find the children of current node
+				 * Child nodes which are legal and unexplored are added to queue
+				 *********************************************************************/
+
+				if (((row+1)<max_rows and (row+1)>0) and
+						((map[row+1][col]!="=") and (map[row+1][col]!="|") and (map[row+1][col]!="-")))
 				{
 
 					nodes_queue.push(make_pair(row+1, col));
@@ -135,10 +150,6 @@ void Agent::bfs() {
 		 * by calling the push method e.g goal_positions.push(current_node)
 		 */
 
-
-
-
-
 	print_evaluation_metrics("queue");
 }
 
@@ -156,37 +167,52 @@ void Agent::dfs() {
 
 	nodes_stack.push(make_pair(initial_pos.first, initial_pos.second));
 	number_of_stored_nodes++;
+
+	/*****************************
+	 * @c max_rows, max_cols	:	Stores maximum number of rows, columns in the map. Used to stay within map
+	 * 								boundaries. Redundant in cases of maps with walls on the exterior.
+	 ****************************/
     int max_rows = map.size();
     int max_cols = map[0].size();
 
+
 	while (nodes_stack.size() > 0) {
 
-		current_node = nodes_stack.top();
-		nodes_stack.pop();
-		number_of_stored_nodes--;
-		int row = current_node.first;
-		int col = current_node.second;
-		number_of_visited_nodes++;
+		current_node = nodes_stack.top(); 			//Get the last node in the stack
+		nodes_stack.pop();							//pop the accessed node from the stack
+		number_of_stored_nodes--;					//decrease size of stored nodes as one node has been popped
+		number_of_visited_nodes++;					//increase size of visited node as one node is being explored
+
+		int row = current_node.first;				//stores row index of current node
+		int col = current_node.second;				//stores column index of current node
 
 		if ((map[row][col]=="=") or (map[row][col]=="|") or (map[row][col]=="-"))
 		{
-			continue;
+			continue;								//if the current node is either an obstacle;Or,
+													//previously explored node; Continue to next node;
 		}
 		else
 		{
 			if  (map[row][col]=="*")
 			{
-				goal_positions.push_back(std::make_pair(row, col));
+				goal_positions.push_back(std::make_pair(row, col));		//Found a goal! inserting to goal_positions
 
-				if (goal_positions.size()>=number_of_goals)
+				if (goal_positions.size()>=number_of_goals)				//If all goals are found, exit from function
 				{
-					map[row][col]="-";
-					print_evaluation_metrics("stack");
+					map[row][col]="-";									// Replace node as explored: "-"; and
+					print_evaluation_metrics("stack");					// print evaluation metrics before exiting
 					return ;
 				}
 
 			}
-			map[row][col]="-";
+			map[row][col]="-";						// Replace node as explored: "-"
+
+
+
+			/*********************************************************************
+			 * "If" statements below are used to find the children of current node
+			 * Child nodes which are legal and unexplored are added to stack
+			 *********************************************************************/
 
 			if (((row+1)<max_rows and (row+1)>0) and ((map[row+1][col]!="=") and (map[row+1][col]!="|") and (map[row+1][col]!="-")))
 			{
