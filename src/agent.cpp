@@ -15,6 +15,8 @@
 #include <set>
 #include <chrono>
 #include <thread>
+#include <time.h>
+#include <ctime>
 
 using namespace std;
 
@@ -35,11 +37,15 @@ void Agent::run() {
 	if (search_option == 1) {
 		cout << "Running BFS " << endl;
 		cout << "Number of goals " << number_of_goals << endl;
+		clock_t tStart = clock();
 		bfs();
+		cout<<"Time taken for BFS::"<<(std::clock() - tStart) / (double)(CLOCKS_PER_SEC / 1000)<<"ms \n ";
 	} else {
 		cout << "Running DFS " << endl;
 		cout << "Number of goals " << number_of_goals << endl;
+		clock_t tStart = clock();
 		dfs();
+		cout<<"Time taken for DFS::"<<(std::clock() - tStart) / (double)(CLOCKS_PER_SEC / 1000)<<"ms \n ";
 	}
 
 }
